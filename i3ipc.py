@@ -23,16 +23,15 @@ class MessageType(Enum):
 
 
 class Event(object):
-    WORKSPACE = (1 << 0)
-    OUTPUT = (1 << 1)
-    MODE = (1 << 2)
-    WINDOW = (1 << 3)
-    BARCONFIG_UPDATE = (1 << 4)
-    BINDING = (1 << 5)
+    WORKSPACE = 1 << 0
+    OUTPUT = 1 << 1
+    MODE = 1 << 2
+    WINDOW = 1 << 3
+    BARCONFIG_UPDATE = 1 << 4
+    BINDING = 1 << 5
 
 
 class _ReplyType(dict):
-
     def __getattr__(self, name):
         return self[name]
 
@@ -47,6 +46,7 @@ class CommandReply(_ReplyType):
     """
     Info about a command that was executed with :func:`Connection.command`.
     """
+
     def __init__(self, data):
         super(CommandReply, self).__init__(data)
 
@@ -57,7 +57,7 @@ class CommandReply(_ReplyType):
 
         :type: str
         """
-        return self.__getattr__('error')
+        return self.__getattr__("error")
 
     @property
     def success(self):
@@ -66,13 +66,14 @@ class CommandReply(_ReplyType):
 
         :type: bool
         """
-        return self.__getattr__('success')
+        return self.__getattr__("success")
 
 
 class VersionReply(_ReplyType):
     """
     Info about the version of the running i3 instance.
     """
+
     def __init__(self, data):
         super(VersionReply, self).__init__(data)
 
@@ -83,7 +84,7 @@ class VersionReply(_ReplyType):
 
         :type: int
         """
-        return self.__getattr__('major')
+        return self.__getattr__("major")
 
     @property
     def minor(self):
@@ -92,7 +93,7 @@ class VersionReply(_ReplyType):
 
         :type: int
         """
-        return self.__getattr__('minor')
+        return self.__getattr__("minor")
 
     @property
     def patch(self):
@@ -101,7 +102,7 @@ class VersionReply(_ReplyType):
 
         :type: int
         """
-        return self.__getattr__('patch')
+        return self.__getattr__("patch")
 
     @property
     def human_readable(self):
@@ -111,7 +112,7 @@ class VersionReply(_ReplyType):
 
         :type: str
         """
-        return self.__getattr__('human_readable')
+        return self.__getattr__("human_readable")
 
     @property
     def loaded_config_file_name(self):
@@ -120,7 +121,8 @@ class VersionReply(_ReplyType):
 
         :type: str
         """
-        return self.__getattr__('loaded_config_file_name')
+        return self.__getattr__("loaded_config_file_name")
+
 
 class BarConfigReply(_ReplyType):
     """
@@ -132,6 +134,7 @@ class BarConfigReply(_ReplyType):
     this reply type can be found `here
     <http://i3wm.org/docs/ipc.html#_bar_config_reply>`_.
     """
+
     def __init__(self, data):
         super(BarConfigReply, self).__init__(data)
 
@@ -143,7 +146,7 @@ class BarConfigReply(_ReplyType):
 
         :type: dict
         """
-        return self.__getattr__('colors')
+        return self.__getattr__("colors")
 
     @property
     def id(self):
@@ -152,7 +155,7 @@ class BarConfigReply(_ReplyType):
 
         :type: str
         """
-        return self.__getattr__('id')
+        return self.__getattr__("id")
 
     @property
     def mode(self):
@@ -162,7 +165,7 @@ class BarConfigReply(_ReplyType):
 
         :type: str
         """
-        return self.__getattr__('mode')
+        return self.__getattr__("mode")
 
     @property
     def position(self):
@@ -171,7 +174,7 @@ class BarConfigReply(_ReplyType):
 
         :type: str
         """
-        return self.__getattr__('position')
+        return self.__getattr__("position")
 
     @property
     def status_command(self):
@@ -182,7 +185,7 @@ class BarConfigReply(_ReplyType):
 
         :type: str
         """
-        return self.__getattr__('status_command')
+        return self.__getattr__("status_command")
 
     @property
     def font(self):
@@ -191,8 +194,7 @@ class BarConfigReply(_ReplyType):
 
         :type: str
         """
-        return self.__getattr__('font')
-
+        return self.__getattr__("font")
 
 
 class OutputReply(_ReplyType):
@@ -204,92 +206,86 @@ class WorkspaceReply(_ReplyType):
 
 
 class WorkspaceEvent(object):
-
     def __init__(self, data, conn):
-        self.change = data['change']
+        self.change = data["change"]
         self.current = None
         self.old = None
 
-        if 'current' in data and data['current']:
-            self.current = Con(data['current'], None, conn)
+        if "current" in data and data["current"]:
+            self.current = Con(data["current"], None, conn)
 
-        if 'old' in data and data['old']:
-            self.old = Con(data['old'], None, conn)
+        if "old" in data and data["old"]:
+            self.old = Con(data["old"], None, conn)
 
 
 class GenericEvent(object):
-
     def __init__(self, data):
-        self.change = data['change']
+        self.change = data["change"]
 
 
 class WindowEvent(object):
-
     def __init__(self, data, conn):
-        self.change = data['change']
-        self.container = Con(data['container'], None, conn)
+        self.change = data["change"]
+        self.container = Con(data["container"], None, conn)
 
 
 class BarconfigUpdateEvent(object):
-
     def __init__(self, data):
-        self.id = data['id']
-        self.hidden_state = data['hidden_state']
-        self.mode = data['mode']
+        self.id = data["id"]
+        self.hidden_state = data["hidden_state"]
+        self.mode = data["mode"]
 
 
 class BindingInfo(object):
-
     def __init__(self, data):
-        self.command = data['command']
-        self.mods = data['mods']
-        self.input_code = data['input_code']
-        self.symbol = data['symbol']
-        self.input_type = data['input_type']
+        self.command = data["command"]
+        self.mods = data["mods"]
+        self.input_code = data["input_code"]
+        self.symbol = data["symbol"]
+        self.input_type = data["input_type"]
 
 
 class BindingEvent(object):
-
     def __init__(self, data):
-        self.change = data['change']
-        self.binding = BindingInfo(data['binding'])
+        self.change = data["change"]
+        self.binding = BindingInfo(data["binding"])
 
 
 class _PubSub(object):
-
     def __init__(self, conn):
         self.conn = conn
         self._subscriptions = []
 
     def subscribe(self, detailed_event, handler):
-        event = detailed_event.replace('-', '_')
-        detail = ''
+        event = detailed_event.replace("-", "_")
+        detail = ""
 
-        if detailed_event.count('::') > 0:
-            [event, detail] = detailed_event.split('::')
+        if detailed_event.count("::") > 0:
+            [event, detail] = detailed_event.split("::")
 
-        self._subscriptions.append({'event': event, 'detail': detail,
-                                    'handler': handler})
+        self._subscriptions.append(
+            {"event": event, "detail": detail, "handler": handler}
+        )
 
     def emit(self, event, data):
-        detail = ''
+        detail = ""
 
-        if data and hasattr(data, 'change'):
+        if data and hasattr(data, "change"):
             detail = data.change
 
         for s in self._subscriptions:
-            if s['event'] == event:
-                if not s['detail'] or s['detail'] == detail:
+            if s["event"] == event:
+                if not s["detail"] or s["detail"] == detail:
                     if data:
-                        s['handler'](self.conn, data)
+                        s["handler"](self.conn, data)
                     else:
-                        s['handler'](self.conn)
+                        s["handler"](self.conn)
+
 
 # this is for compatability with i3ipc-glib
 
 
 class _PropsObject(object):
-
     def __init__(self, obj):
         object.__setattr__(self, "_obj", obj)
 
@@ -318,10 +314,11 @@ class Connection(object):
     :raises Exception: If the connection to ``i3`` cannot be established, or when
         the connection terminates.
     """
-    MAGIC = 'i3-ipc'  # safety string for i3-ipc
+
+    MAGIC = "i3-ipc"  # safety string for i3-ipc
     _chunk_size = 1024  # in bytes
     _timeout = 0.5  # in seconds
-    _struct_header = '=%dsII' % len(MAGIC.encode('utf-8'))
+    _struct_header = "=%dsII" % len(MAGIC.encode("utf-8"))
     _struct_header_size = struct.calcsize(_struct_header)
 
     def __init__(self, socket_path=None):
@@ -331,10 +328,10 @@ class Connection(object):
         if not socket_path:
             try:
                 socket_path = subprocess.check_output(
-                    ['i3', '--get-socketpath'],
-                    close_fds=True, universal_newlines=True).strip()
+                    ["i3", "--get-socketpath"], close_fds=True, universal_newlines=True
+                ).strip()
             except:
-                raise Exception('Failed to retrieve the i3 IPC socket path')
+                raise Exception("Failed to retrieve the i3 IPC socket path")
 
         self._pubsub = _PubSub(self)
         self.props = _PropsObject(self)
@@ -358,9 +355,9 @@ class Connection(object):
         Packs the given message type and payload. Turns the resulting
         message into a byte string.
         """
-        pb = payload.encode('utf-8')
-        s = struct.pack('=II', len(pb), msg_type.value)
-        return self.MAGIC.encode('utf-8') + s + pb
+        pb = payload.encode("utf-8")
+        s = struct.pack("=II", len(pb), msg_type.value)
+        return self.MAGIC.encode("utf-8") + s + pb
 
     def _unpack(self, data):
         """
@@ -370,15 +367,14 @@ class Connection(object):
         msg_magic, msg_length, msg_type = self._unpack_header(data)
         msg_size = self._struct_header_size + msg_length
         # XXX: Message shouldn't be any longer than the data
-        payload = data[self._struct_header_size:msg_size]
-        return payload.decode('utf-8', 'replace')
+        payload = data[self._struct_header_size : msg_size]
+        return payload.decode("utf-8", "replace")
 
     def _unpack_header(self, data):
         """
         Unpacks the header of given byte string.
         """
-        return struct.unpack(self._struct_header,
-                             data[:self._struct_header_size])
+        return struct.unpack(self._struct_header, data[: self._struct_header_size])
 
     def _recv_robust(self, sock, size):
         """
@@ -397,7 +393,7 @@ class Connection(object):
 
         if len(data) == 0:
             # EOF
-            return '', 0
+            return "", 0
 
         msg_magic, msg_length, msg_type = self._unpack_header(data)
         msg_size = self._struct_header_size + msg_length
@@ -450,7 +446,7 @@ class Connection(object):
         :rtype: VersionReply
 
         """
-        data = self.message(MessageType.GET_VERSION, '')
+        data = self.message(MessageType.GET_VERSION, "")
         return json.loads(data, object_hook=VersionReply)
 
     def get_bar_config(self, bar_id=None):
@@ -477,7 +473,7 @@ class Connection(object):
         :rtype: List of strings that can be fed as ``bar_id`` into
             :meth:`get_bar_config`.
         """
-        data = self.message(MessageType.GET_BAR_CONFIG, '')
+        data = self.message(MessageType.GET_BAR_CONFIG, "")
         return json.loads(data)
 
     def get_outputs(self):
@@ -502,7 +498,7 @@ class Connection(object):
               'rect': {'width': 1920, 'height': 1080, 'y': 0, 'x': 0},
               'current_workspace': None}]
         """
-        data = self.message(MessageType.GET_OUTPUTS, '')
+        data = self.message(MessageType.GET_OUTPUTS, "")
         return json.loads(data, object_hook=OutputReply)
 
     def get_workspaces(self):
@@ -515,7 +511,7 @@ class Connection(object):
         :rtype: List of :class:`WorkspaceReply`.
 
         """
-        data = self.message(MessageType.GET_WORKSPACES, '')
+        data = self.message(MessageType.GET_WORKSPACES, "")
         return json.loads(data, object_hook=WorkspaceReply)
 
     def get_tree(self):
@@ -525,7 +521,7 @@ class Connection(object):
 
         :rtype: Con
         """
-        data = self.message(MessageType.GET_TREE, '')
+        data = self.message(MessageType.GET_TREE, "")
         return Con(json.loads(data), None, self)
 
     def subscribe(self, events):
@@ -544,19 +540,20 @@ class Connection(object):
             events_obj.append("binding")
 
         data = self._ipc_send(
-            self.sub_socket, MessageType.SUBSCRIBE, json.dumps(events_obj))
+            self.sub_socket, MessageType.SUBSCRIBE, json.dumps(events_obj)
+        )
         result = json.loads(data, object_hook=CommandReply)
         self.subscriptions |= events
         return result
 
     def on(self, detailed_event, handler):
-        event = detailed_event.replace('-', '_')
+        event = detailed_event.replace("-", "_")
 
-        if detailed_event.count('::') > 0:
-            [event, __] = detailed_event.split('::')
+        if detailed_event.count("::") > 0:
+            [event, __] = detailed_event.split("::")
 
         # special case: ipc-shutdown is not in the protocol
-        if event == 'ipc_shutdown':
+        if event == "ipc_shutdown":
             self._pubsub.subscribe(event, handler)
             return
 
@@ -575,7 +572,7 @@ class Connection(object):
             event_type = Event.BINDING
 
         if not event_type:
-            raise Exception('event not implemented')
+            raise Exception("event not implemented")
 
         self.subscriptions |= event_type
 
@@ -600,31 +597,31 @@ class Connection(object):
 
         if len(data) == 0:
             # EOF
-            self._pubsub.emit('ipc_shutdown', None)
+            self._pubsub.emit("ipc_shutdown", None)
             return True
 
         data = json.loads(data)
-        msg_type = 1 << (msg_type & 0x7f)
-        event_name = ''
+        msg_type = 1 << (msg_type & 0x7F)
+        event_name = ""
         event = None
 
         if msg_type == Event.WORKSPACE:
-            event_name = 'workspace'
+            event_name = "workspace"
             event = WorkspaceEvent(data, self)
         elif msg_type == Event.OUTPUT:
-            event_name = 'output'
+            event_name = "output"
             event = GenericEvent(data)
         elif msg_type == Event.MODE:
-            event_name = 'mode'
+            event_name = "mode"
             event = GenericEvent(data)
         elif msg_type == Event.WINDOW:
-            event_name = 'window'
+            event_name = "window"
             event = WindowEvent(data, self)
         elif msg_type == Event.BARCONFIG_UPDATE:
-            event_name = 'barconfig_update'
+            event_name = "barconfig_update"
             event = BarconfigUpdateEvent(data)
         elif msg_type == Event.BINDING:
-            event_name = 'binding'
+            event_name = "binding"
             event = BindingEvent(data)
         else:
             # we have not implemented this event
@@ -643,18 +640,17 @@ class Connection(object):
 
 
 class Rect(object):
-
     def __init__(self, data):
-        self.x = data['x']
-        self.y = data['y']
-        self.height = data['height']
-        self.width = data['width']
+        self.x = data["x"]
+        self.y = data["y"]
+        self.height = data["height"]
+        self.width = data["width"]
+
 
 class Gaps(object):
-
-    def __init__(self,data):
-        self.inner = data['inner']
-        self.outer = data['outer']
+    def __init__(self, data):
+        self.inner = data["inner"]
+        self.outer = data["outer"]
 
 
 class Con(object):
@@ -822,10 +818,24 @@ class Con(object):
         self.parent = parent
 
         # set simple properties
-        ipc_properties = ['border', 'current_border_width', 'focus', 'focused',
-                          'fullscreen_mode', 'id', 'layout', 'marks', 'name',
-                          'orientation', 'percent', 'type', 'urgent', 'window',
-                          'num', 'scratchpad_state']
+        ipc_properties = [
+            "border",
+            "current_border_width",
+            "focus",
+            "focused",
+            "fullscreen_mode",
+            "id",
+            "layout",
+            "marks",
+            "name",
+            "orientation",
+            "percent",
+            "type",
+            "urgent",
+            "window",
+            "num",
+            "scratchpad_state",
+        ]
         for attr in ipc_properties:
             if attr in data:
                 setattr(self, attr, data[attr])
@@ -835,12 +845,12 @@ class Con(object):
         # XXX in 4.12, marks is an array (old property was a string "mark")
         if not self.marks:
             self.marks = []
-            if 'mark' in data and data['mark']:
-                self.marks.append(data['mark'])
+            if "mark" in data and data["mark"]:
+                self.marks.append(data["mark"])
 
         # Possible values 'user_off', 'user_on', 'auto_off', 'auto_on'
-        if data['floating']:
-            self.floating = data['floating']
+        if data["floating"]:
+            self.floating = data["floating"]
 
         # XXX this is for compatability with 4.8
         if isinstance(self.type, int):
@@ -857,33 +867,33 @@ class Con(object):
 
         # set complex properties
         self.nodes = []
-        for n in data['nodes']:
+        for n in data["nodes"]:
             self.nodes.append(Con(n, self, conn))
 
         self.floating_nodes = []
-        for n in data['floating_nodes']:
+        for n in data["floating_nodes"]:
             self.floating_nodes.append(Con(n, self, conn))
 
         self.window_class = None
         self.window_instance = None
         self.window_role = None
-        if 'window_properties' in data:
-            if 'class' in data['window_properties']:
-                self.window_class = data['window_properties']['class']
-            if 'instance' in data['window_properties']:
-                self.window_instance = data['window_properties']['instance']
-            if 'window_role' in data['window_properties']:
-                self.window_role = data['window_properties']['window_role']
+        if "window_properties" in data:
+            if "class" in data["window_properties"]:
+                self.window_class = data["window_properties"]["class"]
+            if "instance" in data["window_properties"]:
+                self.window_instance = data["window_properties"]["instance"]
+            if "window_role" in data["window_properties"]:
+                self.window_role = data["window_properties"]["window_role"]
 
-        self.rect = Rect(data['rect'])
-        if 'window_rect' in data:
-            self.window_rect = Rect(data['window_rect'])
-        if 'deco_rect' in data:
-            self.deco_rect = Rect(data['deco_rect'])
+        self.rect = Rect(data["rect"])
+        if "window_rect" in data:
+            self.window_rect = Rect(data["window_rect"])
+        if "deco_rect" in data:
+            self.deco_rect = Rect(data["deco_rect"])
 
         self.gaps = None
-        if 'gaps' in data:
-            self.gaps = Gaps(data['gaps'])
+        if "gaps" in data:
+            self.gaps = Gaps(data["gaps"])
 
     def __iter__(self):
         """
@@ -961,7 +971,7 @@ class Con(object):
         for c in self.nodes:
             commands.append('[con_id="{}"] {};'.format(c.id, command))
 
-        self._conn.command(' '.join(commands))
+        self._conn.command(" ".join(commands))
 
     def workspaces(self):
         """
@@ -972,7 +982,7 @@ class Con(object):
         workspaces = []
 
         def collect_workspaces(con):
-            if con.type == "workspace" and not con.name.startswith('__'):
+            if con.type == "workspace" and not con.name.startswith("__"):
                 workspaces.append(con)
                 return
 
@@ -1006,38 +1016,38 @@ class Con(object):
             return None
 
     def find_by_role(self, pattern):
-        return [c for c in self
-                if c.window_role and re.search(pattern, c.window_role)]
+        return [c for c in self if c.window_role and re.search(pattern, c.window_role)]
 
     def find_named(self, pattern):
-        return [c for c in self
-                if c.name and re.search(pattern, c.name)]
+        return [c for c in self if c.name and re.search(pattern, c.name)]
 
     def find_classed(self, pattern):
-        return [c for c in self
-                if c.window_class and re.search(pattern, c.window_class)]
+        return [
+            c for c in self if c.window_class and re.search(pattern, c.window_class)
+        ]
 
     def find_instanced(self, pattern):
-        return [c for c in self
-                if c.window_instance and re.search(pattern, c.window_instance)]
+        return [
+            c
+            for c in self
+            if c.window_instance and re.search(pattern, c.window_instance)
+        ]
 
     def find_marked(self, pattern=".*"):
         pattern = re.compile(pattern)
-        return [c for c in self
-                if any(pattern.search(mark) for mark in c.marks)]
+        return [c for c in self if any(pattern.search(mark) for mark in c.marks)]
 
     def find_fullscreen(self):
-        return [c for c in self
-                if c.type == 'con' and c.fullscreen_mode]
+        return [c for c in self if c.type == "con" and c.fullscreen_mode]
 
     def workspace(self):
-        if self.type == 'workspace':
+        if self.type == "workspace":
             return self
 
         ret = self.parent
 
         while ret:
-            if ret.type == 'workspace':
+            if ret.type == "workspace":
                 break
             ret = ret.parent
 

@@ -9,21 +9,28 @@ class WorkspaceSub(threading.Thread):
     def __init__(self, con, callback, modeCallback):
         self.con = con
 
-        i3callback = lambda _, workspaces: callback(self.con.get_workspaces())
-        i3ModeCallback = lambda _, mode: modeCallback(mode)
-        self.con.on('workspace', i3callback)
-        self.con.on('mode', i3ModeCallback)
+        def _i3ModeCallback(_, mode):
+            return modeCallback(mode)
+
+        def _i3callback(_, workspaces):
+            return callback(self.con.get_workspaces())
+
+        i3callback = _i3callback
+        i3ModeCallback = _i3ModeCallback
+        self.con.on("workspace", i3callback)
+        self.con.on("mode", i3ModeCallback)
 
         threading.Thread.__init__(self)
         self.start()
-        
+
     def run(self):
-        logging.debug('run')
+        logging.debug("run")
         self.con.event_socket_setup()
 
         while not self.con.event_socket_poll():
-            logging.debug('loop')
-            
+            logging.debug("loop")
+
+
 class I3Conn(object):
     def __init__(self):
         self.try_to_connect()
@@ -33,9 +40,10 @@ class I3Conn(object):
         while not con and tries > 0:
             try:
                 con = self.create_connection()
-            except:
+            except Exception as e:
                 tries -= 1
                 time.sleep(0.3)
+                logging.error("Tried to connect: {e}")
 
         if not con:
             raise "Failed to connect to i3, is it running?"
@@ -43,9 +51,9 @@ class I3Conn(object):
             self.con = con
 
     def create_connection(self):
-        logging.debug('I3Conn create_connection')
+        logging.debug("I3Conn create_connection")
         con = i3ipc.Connection()
-        con.on('ipc_shutdown', self.restart)
+        con.on("ipc_shutdown", self.restart)
         return con
 
     def get_workspaces(self):
@@ -63,9 +71,9 @@ class I3Conn(object):
     # is taking place on the main thread(s), I suspect GTK spins up more than
     # one thread or uses a thread pool. So the gtk thread(s) can't use the same
     # connection, as they will trip over themselves and
-    # clobber the socket. The hack is to create a new connection each time, which 
+    # clobber the socket. The hack is to create a new connection each time, which
     # opens its own independent socket to i3.
-    # 
+    #
     # ways to fix this:
     # 1) figure out how to make this a critical section on the gtk thread
     # 2) spin up a third thread who's job is to send commands to i3, use a queue
@@ -74,9 +82,9 @@ class I3Conn(object):
     # to anyone reading this, I'm brand new to python, which is why I'm stumbling on this
     #
     def go_to_workspace(self, workspace_name):
-        logging.debug('go to workspace: {}'.format(workspace_name))
+        logging.debug("go to workspace: {}".format(workspace_name))
         throwawayCon = i3ipc.Connection()
-        throwawayCon.command('workspace ' + workspace_name)
+        throwawayCon.command("workspace " + workspace_name)
         throwawayCon.close()
 
     def subscribe(self, callback, modeCallback):
@@ -87,17 +95,16 @@ class I3Conn(object):
         self.sub = WorkspaceSub(self.con, self.callback, self.modeCallback)
 
     def close(self):
-        logging.debug('I3Conn close')
+        logging.debug("I3Conn close")
         if self.con:
             self.con.close()
             self.con = None
 
     def restart(self, data=None):
-        logging.debug('I3Conn restart')
+        logging.debug("I3Conn restart")
         self.close()
 
         self.try_to_connect()
 
         if self.con and self.callback and self.modeCallback:
             self.subscribe(self.callback, self.modeCallback)
-
